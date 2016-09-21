@@ -50,6 +50,10 @@ def register_vcs(vcs):
     """
     Registers VCS if it's supported.
     """
+
+    print vcs.name
+    print vcs.is_supported()
+
     if vcs.is_supported():
         key = vcs.name.lower()
         VCS_REGISTRY[key] = vcs
@@ -698,9 +702,9 @@ class GitWithGerritRepository(GitRepository):
 
 
 @register_vcs
-class SubversionRepository(GitRepository):
+class GitSvnRepository(GitRepository):
 
-    name = 'Subversion'
+    name = 'Subversion (git-svn)'
     req_version = '1.6'
 
     _cmd_update_remote = ['svn', 'fetch']
@@ -1206,3 +1210,111 @@ class HgRepository(Repository):
                 # No changes found
                 return
             raise
+
+
+@register_vcs
+class SubversionRepository(Repository):
+    _cmd = 'svn'
+    name = 'Subversion (svn)'
+    req_version = '1.6'
+    default_branch = 'trunk'
+
+    _cmd_update_remote = ['update']
+
+    @classmethod
+    def _get_version(cls):
+        return cls._popen(['--version']).split()[2]
+
+    def configure_remote(self, pull_url, push_url, branch):
+        """ In subversion none to do """
+        pass
+
+    def set_committer(self, name, mail):
+        """ In subversion none to do """
+        pass
+
+    def update_remote(self):
+        super(SubversionRepository, self).update_remote()
+
+    def init(self):
+        print 'init'
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        pass
+
+    def is_valid(self):
+        print 'is_valid'
+
+        return (
+            os.path.exists(os.path.join(self.path, '.svn'))
+        )
+
+    @classmethod
+    def clone(cls, source, target, branch=None):
+        print 'clone'
+        
+        pass
+
+
+
+
+
+    def rebase(self, abort=False):
+        print 'rebase'
+        pass
+
+    def remove(self, files, message, author=None):
+        print 'remove'
+        pass
+
+    def commit(self, message, author=None, timestamp=None, files=None):
+        print 'commit'
+        pass
+
+    def status(self):
+        print 'status'
+        return super(SubversionRepository, self).status()
+
+    def check_config(self):
+        print 'check_config'
+        pass
+
+    def needs_push(self):
+        print 'needs_push'
+        pass
+
+    def needs_commit(self, filename=None):
+        print 'needs_commit'
+        pass
+
+    def configure_branch(self, branch):
+        print 'configure_branch'
+        pass
+
+    def push(self):
+        print 'push'
+        super(SubversionRepository, self).push()
+
+    def needs_merge(self):
+        print 'needs_merge'
+        pass
+
+    def describe(self):
+        print 'describe'
+        pass
+
+    def reset(self):
+        print 'reset'
+        pass
+
+    def get_revision_info(self, revision):
+        print 'get_revision_info'
+        pass
+
+    def merge(self, abort=False):
+        print 'merge'
+        pass
+
+
+
+
